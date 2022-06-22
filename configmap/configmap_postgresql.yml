@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-cm
+  namespace: staging
+data:
+# actual envs of postgresql keys , it ill create the postgres deployment with these creds
+  POSTGRES_DB: "trippr"
+  POSTGRES_USER: "trippr@admin"
+  POSTGRES_PASSWORD: "trippr_pass"

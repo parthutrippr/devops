@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-trippr
+  namespace: staging
+  labels:
+    app: server-trippr
+spec:
+  selector:
+    matchLabels:
+      app: server-trippr
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: server-trippr
+    spec:
+      containers:
+        - name: server
+          image: bhaskarjb/server:c80e06ec
+          ports:
+            - protocol: TCP
+              containerPort: 3000
+          env:
+            - name: DBHOST
+              value: "postgres-svc.staging.svc.cluster.local"
+            - name: DBPORT
+              value: "5432"
+            - name: DBPASS
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: postgresql-cm
+            - name: DBUSER
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_USER
+                  name: postgresql-cm
+            - name: DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: POSTGRES_DB
+                  name: postgresql-cm
+          livenessProbe:
+            httpGet:
+              path: "/healthz"
+              port: 3000
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: "/healthz"
+              port: 3000
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+      restartPolicy: Always

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trippr-website
+  namespace: staging
+spec:
+  selector:
+    matchLabels:
+      app: trippr-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: trippr-app
+    spec:
+      containers:
+        - name: trippr-website
+          image: bhaskarjb/test:0242f4ff
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
